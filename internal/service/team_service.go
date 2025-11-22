@@ -50,3 +50,12 @@ func (s *TeamService) AddTeam(ctx context.Context, team domain.Team) (domain.Tea
 
 	return result, nil
 }
+
+func (s *TeamService) GetTeam(ctx context.Context, name domain.TeamName) (domain.Team, error) {
+	team, err := s.teams.GetTeamByName(ctx, name)
+	if err != nil {
+		s.logger.Error("get team", slog.String("team", string(name)), slog.Any("err", err))
+		return domain.Team{}, err
+	}
+	return team, nil
+}

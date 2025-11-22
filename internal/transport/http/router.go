@@ -14,9 +14,23 @@ func NewRouter(h *Handler) http.Handler {
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 
-	// r.Route("/users", func(r chi.Router) {
-	// 	r.Post("/setIsActive", h.UserSetIsActive)
-	// 	r.Get("/getReview", h.UserGetReview)
-	// })
+	r.Route("/team", func(r chi.Router) {
+		r.Post("/add", h.TeamAdd)
+		r.Get("/get", h.TeamGet)
+	})
+
+	r.Route("/users", func(r chi.Router) {
+		r.Post("/setIsActive", h.UserSetIsActive)
+		r.Get("/getReview", h.UserGetReview)
+	})
+
+	r.Route("/pullRequest", func(r chi.Router) {
+		r.Post("/create", h.PRCreate)
+		r.Post("/merge", h.PRMerge)
+		r.Post("/reassign", h.PRReassign)
+	})
+
+	r.Get("/health", h.Health)
+
 	return r
 }

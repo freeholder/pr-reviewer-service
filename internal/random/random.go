@@ -2,7 +2,6 @@ package random
 
 import (
 	"math/rand"
-	"time"
 )
 
 type Randomizer interface {
@@ -10,10 +9,6 @@ type Randomizer interface {
 }
 
 type DefaultRandomizer struct{}
-
-func init() {
-	rand.Seed(time.Now().UnixNano())
-}
 
 func (DefaultRandomizer) Intn(n int) int {
 	return rand.Intn(n)

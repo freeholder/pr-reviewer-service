@@ -4,16 +4,25 @@ import (
 	"encoding/json"
 	"log/slog"
 	"net/http"
+
+	"github.com/freeholder/pr-reviewer-service/internal/service"
 )
 
 type Handler struct {
-	logger *slog.Logger
+	logger      *slog.Logger
+	teamService *service.TeamService
+	userService *service.UserService
+	prService   *service.PRService
 }
 
-func NewHandler(logger *slog.Logger) *Handler {
+func NewHandler(logger *slog.Logger, teamService *service.TeamService, userService *service.UserService, prService *service.PRService) *Handler {
 	return &Handler{
-		logger: logger,
+		logger:      logger,
+		teamService: teamService,
+		userService: userService,
+		prService:   prService,
 	}
+
 }
 
 func (h *Handler) writeJSON(w http.ResponseWriter, status int, data any) {
