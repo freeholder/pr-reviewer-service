@@ -31,6 +31,7 @@ func NewRouter(h *Handler) http.Handler {
 	})
 
 	r.Get("/health", h.Health)
+	r.Get("/stats/reviewers", h.GetReviewerStats)
 
 	return r
 }

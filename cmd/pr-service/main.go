@@ -49,12 +49,14 @@ func main() {
 	teamRepo := postgres.NewTeamRepo(db)
 	userRepo := postgres.NewUserRepo(db)
 	prRepo := postgres.NewPRRepo(db)
+	statsRepo := postgres.NewStatsRepo(db)
 
 	teamSvc := service.NewTeamService(logger, teamRepo, userRepo)
 	userSvc := service.NewUserService(logger, userRepo, prRepo)
 	prSvc := service.NewPRService(logger, userRepo, prRepo, random.DefaultRandomizer{})
+	statsSvc := service.NewStatsService(statsRepo)
 
-	handler := httptransport.NewHandler(logger, teamSvc, userSvc, prSvc)
+	handler := httptransport.NewHandler(logger, teamSvc, userSvc, prSvc, statsSvc)
 	router := httptransport.NewRouter(handler)
 
 	addr := ":" + cfg.HTTPPort

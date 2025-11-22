@@ -9,18 +9,20 @@ import (
 )
 
 type Handler struct {
-	logger      *slog.Logger
-	teamService *service.TeamService
-	userService *service.UserService
-	prService   *service.PRService
+	logger       *slog.Logger
+	teamService  *service.TeamService
+	userService  *service.UserService
+	prService    *service.PRService
+	statsService *service.StatsService
 }
 
-func NewHandler(logger *slog.Logger, teamService *service.TeamService, userService *service.UserService, prService *service.PRService) *Handler {
+func NewHandler(logger *slog.Logger, teamService *service.TeamService, userService *service.UserService, prService *service.PRService, statsService *service.StatsService) *Handler {
 	return &Handler{
-		logger:      logger,
-		teamService: teamService,
-		userService: userService,
-		prService:   prService,
+		logger:       logger,
+		teamService:  teamService,
+		userService:  userService,
+		prService:    prService,
+		statsService: statsService,
 	}
 
 }
