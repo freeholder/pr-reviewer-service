@@ -1,0 +1,6 @@
+inters:
+  enable:
+    - errcheck
+    - govet
+    - staticcheck
+    - gofmt
