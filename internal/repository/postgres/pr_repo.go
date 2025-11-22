@@ -36,7 +36,7 @@ func (r *PRRepo) Create(ctx context.Context, pr domain.PullRequest) (err error) 
 		}
 	}()
 
-	_, err = tx.ExecContext(ctx, "INSERT INTO pull_requests (pull_request_id, pull_request_name author_id, status) VALUES ($1, $2, $3, $4)", string(pr.ID), pr.Name, string(pr.AuthorID), string(pr.Status))
+	_, err = tx.ExecContext(ctx, "INSERT INTO pull_requests (pull_request_id, pull_request_name, author_id, status) VALUES ($1, $2, $3, $4)", string(pr.ID), pr.Name, string(pr.AuthorID), string(pr.Status))
 	if err != nil {
 		if isUnique(err) {
 			return domain.NewDomainError(domain.ErrPRExists, "pull request already exists")
@@ -188,8 +188,6 @@ func (r *PRRepo) ReplaceReviewer(ctx context.Context, prID domain.PullRequestID,
 	defer func() {
 		if err != nil {
 			_ = tx.Rollback()
-		} else {
-			_ = tx.Commit()
 		}
 	}()
 
@@ -212,6 +210,10 @@ func (r *PRRepo) ReplaceReviewer(ctx context.Context, prID domain.PullRequestID,
 
 	if err != nil {
 		return domain.PullRequest{}, fmt.Errorf("insert new reviewer: %w", err)
+	}
+
+	if err = tx.Commit(); err != nil {
+		return domain.PullRequest{}, fmt.Errorf("commit tx: %w", err)
 	}
 
 	pr, err = r.GetByID(ctx, prID)

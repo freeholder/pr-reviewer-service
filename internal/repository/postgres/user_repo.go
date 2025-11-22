@@ -34,7 +34,7 @@ func (r *UserRepo) UpdateUsers(ctx context.Context, users []domain.User) error {
 		}
 	}()
 
-	const query = "INSERT INO users (user_id, username, team_name, is_active) VALUES ($1, $2, $3, $4) ON CONFLICT (user_id) DO UPDATE SET username = EXCLUDED.username, team_name = EXCLUDED.team_name, is_active = EXCLUDED.is_active;"
+	const query = "INSERT INTO users (user_id, username, team_name, is_active) VALUES ($1, $2, $3, $4) ON CONFLICT (user_id) DO UPDATE SET username = EXCLUDED.username, team_name = EXCLUDED.team_name, is_active = EXCLUDED.is_active;"
 
 	for _, u := range users {
 		if err := u.Validate(); err != nil {
@@ -93,7 +93,7 @@ func (r *UserRepo) GetActiveTeamMembersExcept(ctx context.Context, teamName doma
 	args := []any{string(teamName)}
 
 	for i, id := range exclude {
-		query += fmt.Sprintf("AND user_id <> $%d", i+2)
+		query += fmt.Sprintf(" AND user_id <> $%d", i+2)
 		args = append(args, string(id))
 	}
 

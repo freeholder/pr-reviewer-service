@@ -16,6 +16,7 @@ import (
 	"github.com/freeholder/pr-reviewer-service/internal/repository/postgres"
 	"github.com/freeholder/pr-reviewer-service/internal/service"
 	httptransport "github.com/freeholder/pr-reviewer-service/internal/transport/http"
+	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
 func main() {

@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/caarlos0/env/v10"
+	"github.com/joho/godotenv"
 )
 
 type Config struct {
@@ -13,6 +14,9 @@ type Config struct {
 
 func MustLoad() Config {
 	var cfg Config
+	if err := godotenv.Load(); err != nil {
+		log.Println("No .env file found, using system environment variables")
+	}
 	if err := env.Parse(&cfg); err != nil {
 		log.Fatalf("failed to load config from env: %v", err)
 	}
