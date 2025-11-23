@@ -17,6 +17,7 @@ func NewRouter(h *Handler) http.Handler {
 	r.Route("/team", func(r chi.Router) {
 		r.Post("/add", h.TeamAdd)
 		r.Get("/get", h.TeamGet)
+		r.Post("/bulkDeactivate", h.BulkDeactivateTeamMembers)
 	})
 
 	r.Route("/users", func(r chi.Router) {
@@ -32,7 +33,6 @@ func NewRouter(h *Handler) http.Handler {
 
 	r.Get("/health", h.Health)
 	r.Get("/stats/reviewers", h.GetReviewerStats)
-	r.Post("/team/bulkDeactivate", h.BulkDeactivateTeamMembers)
 
 	return r
 }

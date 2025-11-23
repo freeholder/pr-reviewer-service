@@ -9,7 +9,7 @@ lint:
 	$(ROOT)/bin/golangci-lint run ./...
 docker-up-app-db:
 	docker-compose up -d db app
-docker-up-no-cache:
+docker-up-build:
 	docker-compose build --no-cache
 	docker-compose up -d db app
 k6-test:

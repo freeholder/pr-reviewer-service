@@ -271,6 +271,7 @@ func (r *PRRepo) ListByReviewer(ctx context.Context, reviewerID domain.UserID) (
 
 func (r *PRRepo) GetOpenPRIDsByReviewer(ctx context.Context, reviewerID domain.UserID) ([]domain.PullRequestID, error) {
 	const query = "SELECT pr.pull_request_id FROM pull_requests pr JOIN pull_request_reviewers prr ON prr.pull_request_id = pr.pull_request_id WHERE prr.reviewer_id = $1 AND pr.status = 'OPEN';"
+
 	rows, err := r.db.QueryContext(ctx, query, string(reviewerID))
 	if err != nil {
 		return nil, fmt.Errorf("get open prs by reviewer: %w", err)
