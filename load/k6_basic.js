@@ -16,9 +16,9 @@ export function setup() {
   const payload = JSON.stringify({
     team_name: 'k6-team',
     members: [
-      { user_id: 'u1', username: 'Egor',   is_active: true },
-      { user_id: 'u2', username: 'Andrey',     is_active: true },
-      { user_id: 'u3', username: 'Vladimir', is_active: true }
+      { user_id: 'k6-u1', username: 'Egor',   is_active: true },
+      { user_id: 'k6-u2', username: 'Andrey',     is_active: true },
+      { user_id: 'k6-u3', username: 'Vladimir', is_active: true }
     ]
   });
 
@@ -40,7 +40,7 @@ export default function () {
     'health is 200': (r) => r.status === 200,
   });
 
-  res = http.get(`${BASE_URL}/users/getReview?user_id=u1`);
+  res = http.get(`${BASE_URL}/users/getReview?user_id=k6-u1`);
   check(res, {
     'getReview is 200': (r) => r.status === 200,
   });
