@@ -9,14 +9,14 @@
 - **Сборка и запуск**: `docker-compose up`
 - **Порт сервиса**: 8080
 
-## 1. Как запустить
+## Как запустить
 
-### Вариант 1. Основной (как в задании) — через docker-compose
+### Вариант 1. Через docker-compose
 
 Требуется установленный Docker и docker-compose.
 
 ```bash
-git clone <url_репозитория>
+git clone https://github.com/freeholder/pr-reviewer-service
 cd pr-reviewer-service
 
 docker-compose up
