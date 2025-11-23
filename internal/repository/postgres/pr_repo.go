@@ -268,3 +268,28 @@ func (r *PRRepo) ListByReviewer(ctx context.Context, reviewerID domain.UserID) (
 
 	return result, nil
 }
+
+func (r *PRRepo) GetOpenPRIDsByReviewer(ctx context.Context, reviewerID domain.UserID) ([]domain.PullRequestID, error) {
+	const query = "SELECT pr.pull_request_id FROM pull_requests pr JOIN pull_request_reviewers prr ON prr.pull_request_id = pr.pull_request_id WHERE prr.reviewer_id = $1 AND pr.status = 'OPEN';"
+	rows, err := r.db.QueryContext(ctx, query, string(reviewerID))
+	if err != nil {
+		return nil, fmt.Errorf("get open prs by reviewer: %w", err)
+	}
+	defer rows.Close()
+
+	var result []domain.PullRequestID
+
+	for rows.Next() {
+		var id string
+		if err := rows.Scan(&id); err != nil {
+			return nil, fmt.Errorf("scan pr id: %w", err)
+		}
+		result = append(result, domain.PullRequestID(id))
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("iterate open prs by reviewer: %w", err)
+	}
+
+	return result, nil
+}

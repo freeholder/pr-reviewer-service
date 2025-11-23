@@ -25,4 +25,5 @@ type PullRequestRepository interface {
 	SetMerged(ctx context.Context, id domain.PullRequestID, mergedAt time.Time) (domain.PullRequest, error)
 	ReplaceReviewer(ctx context.Context, prID domain.PullRequestID, oldReviewerID, newReviewerID domain.UserID) (domain.PullRequest, error)
 	ListByReviewer(ctx context.Context, reviewerID domain.UserID) ([]domain.PullRequest, error)
+	GetOpenPRIDsByReviewer(ctx context.Context, reviewerID domain.UserID) ([]domain.PullRequestID, error)
 }

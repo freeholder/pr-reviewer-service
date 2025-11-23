@@ -30,5 +30,16 @@ services:
     ports:
       - "8080:8080"
 
+  k6:
+    image: grafana/k6
+    depends_on:
+      app:
+        condition: service_started
+    volumes:
+      - ./load:/scripts
+    environment:
+      BASE_URL: http://app:8080
+    entrypoint: ["k6", "run", "/scripts/k6_basic.js"]
+
 volumes:
   pgdata:

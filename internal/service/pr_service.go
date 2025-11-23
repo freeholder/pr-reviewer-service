@@ -2,6 +2,8 @@ package service
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"log/slog"
 	"time"
 
@@ -12,8 +14,22 @@ import (
 type PRService struct {
 	logger *slog.Logger
 	users  UserRepository
+	teams  TeamRepository
 	prs    PullRequestRepository
 	rand   random.Randomizer
+}
+
+type BulkNotReassignedPR struct {
+	PullRequestID domain.PullRequestID
+	UserID        domain.UserID
+	Reason        string
+}
+
+type BulkDeactivateResult struct {
+	TeamName           domain.TeamName
+	DeactivatedUserIDs []domain.UserID
+	ReassignedCount    int
+	NotReassigned      []BulkNotReassignedPR
 }
 
 func NewPRService(logger *slog.Logger, users UserRepository, prs PullRequestRepository, rand random.Randomizer) *PRService {
@@ -182,4 +198,49 @@ func (s *PRService) pickReviewers(candidates []domain.User, limit int) []domain.
 	}
 
 	return result
+}
+
+func (s *PRService) BulkDeactivateAndReassign(ctx context.Context, teamName domain.TeamName, userIDs []domain.UserID) (BulkDeactivateResult, error) {
+	res := BulkDeactivateResult{
+		TeamName:           teamName,
+		DeactivatedUserIDs: make([]domain.UserID, 0, len(userIDs)),
+		NotReassigned:      make([]BulkNotReassignedPR, 0),
+	}
+
+	if _, err := s.teams.GetTeamByName(ctx, teamName); err != nil {
+		return BulkDeactivateResult{}, err
+	}
+
+	for _, uid := range userIDs {
+		if _, err := s.users.SetUserActive(ctx, uid, false); err != nil {
+			return BulkDeactivateResult{}, fmt.Errorf("deactivate user %s: %w", uid, err)
+		}
+		res.DeactivatedUserIDs = append(res.DeactivatedUserIDs, uid)
+
+		prIDs, err := s.prs.GetOpenPRIDsByReviewer(ctx, uid)
+		if err != nil {
+			return BulkDeactivateResult{}, fmt.Errorf("get open prs for %s: %w", uid, err)
+		}
+
+		for _, prID := range prIDs {
+			_, _, err := s.ReassignReviewer(ctx, prID, uid)
+			if err != nil {
+				var derr *domain.DomainError
+				if errors.As(err, &derr) && derr.Code == domain.ErrNoCandidate {
+					res.NotReassigned = append(res.NotReassigned, BulkNotReassignedPR{
+						PullRequestID: prID,
+						UserID:        uid,
+						Reason:        "NO_CANDIDATE",
+					})
+					continue
+				}
+
+				return BulkDeactivateResult{}, fmt.Errorf("reassign %s in %s: %w", uid, prID, err)
+			}
+
+			res.ReassignedCount++
+		}
+	}
+
+	return res, nil
 }

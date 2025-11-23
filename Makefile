@@ -7,8 +7,10 @@ golangci-lint:
 	GOBIN=$(ROOT)/bin go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
 lint:
 	$(ROOT)/bin/golangci-lint run ./...
-docker-up:
-	docker-compose up --build
+docker-up-app-db:
+	docker-compose up -d db app
 docker-up-no-cache:
 	docker-compose build --no-cache
-	docker-compose up
+	docker-compose up -d db app
+k6-test:
+	docker-compose run --rm k6

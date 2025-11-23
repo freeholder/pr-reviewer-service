@@ -32,6 +32,7 @@ func NewRouter(h *Handler) http.Handler {
 
 	r.Get("/health", h.Health)
 	r.Get("/stats/reviewers", h.GetReviewerStats)
+	r.Post("/team/bulkDeactivate", h.BulkDeactivateTeamMembers)
 
 	return r
 }
