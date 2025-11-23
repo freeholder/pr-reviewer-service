@@ -199,7 +199,7 @@ make k6-test
 }
 ```
 
-#### ```POST /pullRequest/merge``` — Idempotent-операция merge.
+#### ```POST /pullRequest/merge``` — Идемпотентная операция merge.
 
 Пример запроса:
 ```json
