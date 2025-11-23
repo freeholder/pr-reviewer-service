@@ -40,7 +40,7 @@ export default function () {
     'health is 200': (r) => r.status === 200,
   });
 
-  res = http.get(`${BASE_URL}/users/getReview?user_id=u2`);
+  res = http.get(`${BASE_URL}/users/getReview?user_id=u1`);
   check(res, {
     'getReview is 200': (r) => r.status === 200,
   });
