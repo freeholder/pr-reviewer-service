@@ -12,6 +12,28 @@ export const options = {
 
 const BASE_URL = __ENV.BASE_URL || 'http://app:8080';
 
+export function setup() {
+  const payload = JSON.stringify({
+    team_name: 'k6-team',
+    members: [
+      { user_id: 'u1', username: 'Egor',   is_active: true },
+      { user_id: 'u2', username: 'Andrey',     is_active: true },
+      { user_id: 'u3', username: 'Vladimir', is_active: true }
+    ]
+  });
+
+  const res = http.post(`${BASE_URL}/team/add`, payload, {
+    headers: { 'Content-Type': 'application/json' },
+  });
+
+  check(res, {
+    'team_add status is 201 or 400 TEAM_EXISTS': (r) =>
+      r.status === 201 || r.status === 400,
+  });
+
+  return { teamCreated: res.status === 201};
+}
+
 export default function () {
   let res = http.get(`${BASE_URL}/health`);
   check(res, {
