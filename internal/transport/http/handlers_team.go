@@ -3,6 +3,7 @@ package http
 import (
 	"encoding/json"
 	"net/http"
+	"time"
 
 	"github.com/freeholder/pr-reviewer-service/internal/domain"
 )
@@ -68,6 +69,17 @@ func (h *Handler) TeamGet(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) BulkDeactivateTeamMembers(w http.ResponseWriter, r *http.Request) {
+
+	start := time.Now()
+
+	defer func() {
+		dur := time.Since(start)
+		h.logger.Info("bulk deactivate finished",
+			"duration_ms", dur.Milliseconds(),
+			"duration", dur.String(),
+		)
+	}()
+
 	ctx := r.Context()
 
 	var req bulkDeactivateRequest
