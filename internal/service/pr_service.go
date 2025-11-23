@@ -32,12 +32,13 @@ type BulkDeactivateResult struct {
 	NotReassigned      []BulkNotReassignedPR
 }
 
-func NewPRService(logger *slog.Logger, users UserRepository, prs PullRequestRepository, rand random.Randomizer) *PRService {
+func NewPRService(logger *slog.Logger, users UserRepository, prs PullRequestRepository, rand random.Randomizer, teams TeamRepository) *PRService {
 	return &PRService{
 		logger: logger,
 		users:  users,
 		prs:    prs,
 		rand:   rand,
+		teams:  teams,
 	}
 }
 func (s *PRService) Create(ctx context.Context, id domain.PullRequestID, name string, authorID domain.UserID) (domain.PullRequest, error) {

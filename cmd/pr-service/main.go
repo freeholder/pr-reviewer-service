@@ -53,7 +53,7 @@ func main() {
 
 	teamSvc := service.NewTeamService(logger, teamRepo, userRepo)
 	userSvc := service.NewUserService(logger, userRepo, prRepo)
-	prSvc := service.NewPRService(logger, userRepo, prRepo, random.DefaultRandomizer{})
+	prSvc := service.NewPRService(logger, userRepo, prRepo, random.DefaultRandomizer{}, teamRepo)
 	statsSvc := service.NewStatsService(statsRepo)
 
 	handler := httptransport.NewHandler(logger, teamSvc, userSvc, prSvc, statsSvc)

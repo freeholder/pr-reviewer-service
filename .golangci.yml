@@ -1,4 +1,4 @@
-inters:
+linters:
   enable:
     - errcheck
     - govet
