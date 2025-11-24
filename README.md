@@ -70,9 +70,11 @@ make k6-test
 {
   "team_name": "backend",
   "members": [
-    { "user_id": "u1", "username": "Alice",   "is_active": true },
-    { "user_id": "u2", "username": "Bob",     "is_active": true },
-    { "user_id": "u3", "username": "Charlie", "is_active": true }
+    { "user_id": "u1", "username": "Egor",   "is_active": true },
+    { "user_id": "u2", "username": "Andrei",  "is_active": true },
+    { "user_id": "u3", "username": "Nikolai", "is_active": true },
+    { "user_id": "u4", "username": "Vladimir", "is_active": true },
+    { "user_id": "u5", "username": "Kirill", "is_active": true }
   ]
 }
 ```
@@ -80,14 +82,36 @@ make k6-test
 Пример ответа ```201 Created```:
 ```json
 {
-  "team": {
-    "team_name": "backend",
-    "members": [
-      { "user_id": "u1", "username": "Alice",   "is_active": true },
-      { "user_id": "u2", "username": "Bob",     "is_active": true },
-      { "user_id": "u3", "username": "Charlie", "is_active": true }
-    ]
-  }
+    "team": {
+        "team_name": "backend",
+        "members": [
+            {
+                "user_id": "u1",
+                "username": "Egor",
+                "is_active": true
+            },
+            {
+                "user_id": "u2",
+                "username": "Andrei",
+                "is_active": true
+            },
+            {
+                "user_id": "u3",
+                "username": "Nikolai",
+                "is_active": true
+            },
+            {
+                "user_id": "u4",
+                "username": "Vladimir",
+                "is_active": true
+            },
+            {
+                "user_id": "u5",
+                "username": "Kirill",
+                "is_active": true
+            }
+        ]
+    }
 }
 ```
 
@@ -102,11 +126,34 @@ make k6-test
 Пример ответа ```200 OK```:
 ```json
 {
-  "team_name": "backend",
-  "members": [
-    { "user_id": "u1", "username": "Alice", "is_active": true },
-    { "user_id": "u2", "username": "Bob",   "is_active": true }
-  ]
+    "team_name": "backend",
+    "members": [
+        {
+            "user_id": "u1",
+            "username": "Egor",
+            "is_active": true
+        },
+        {
+            "user_id": "u2",
+            "username": "Andrei",
+            "is_active": true
+        },
+        {
+            "user_id": "u3",
+            "username": "Nikolai",
+            "is_active": true
+        },
+        {
+            "user_id": "u4",
+            "username": "Vladimir",
+            "is_active": true
+        },
+        {
+            "user_id": "u5",
+            "username": "Kirill",
+            "is_active": true
+        }
+    ]
 }
 ```
 
@@ -125,27 +172,20 @@ make k6-test
 ```json
 
 {
-  "user": {
-    "user_id": "u2",
-    "username": "Bob",
-    "team_name": "backend",
-    "is_active": false
-  }
+    "user": {
+        "user_id": "u2",
+        "username": "Andrei",
+        "team_name": "backend",
+        "is_active": false
+    }
 }
 ```
  **```GET /users/getReview?user_id=<id>```** — получить PR’ы, где пользователь назначен ревьювером.
+ 
 ```json
-
 {
-  "user_id": "u2",
-  "pull_requests": [
-    {
-      "pull_request_id": "pr-1001",
-      "pull_request_name": "Add search",
-      "author_id": "u1",
-      "status": "OPEN"
-    }
-  ]
+    "user_id": "u2",
+    "pull_requests": []
 }
 ```
 ### Pull Requests
@@ -165,16 +205,46 @@ make k6-test
 ```json
 
 {
-  "pr": {
-    "pull_request_id": "pr-1001",
-    "pull_request_name": "Add search",
-    "author_id": "u1",
-    "status": "OPEN",
-    "assigned_reviewers": ["u2", "u3"],
-    "createdAt": "2025-11-23T16:17:59.442504Z"
-  }
+    "pr": {
+        "pull_request_id": "pr-1001",
+        "pull_request_name": "Add search",
+        "author_id": "u1",
+        "status": "OPEN",
+        "assigned_reviewers": [
+            "u3",
+            "u5"
+        ]
+    }
 }
 ```
+**```POST /pullRequest/reassign```** — переназначить конкретного ревьювера на другого участника его команды.
+
+Пример запроса:
+```json
+{
+  "pull_request_id": "pr-1001",
+  "old_user_id": "u3"
+}
+```
+
+Пример ответа ```200 OK```:
+```json
+{
+    "pr": {
+        "pull_request_id": "pr-1001",
+        "pull_request_name": "Add search",
+        "author_id": "u1",
+        "status": "OPEN",
+        "assigned_reviewers": [
+            "u5",
+            "u4"
+        ],
+        "createdAt": "2025-11-24T05:59:25.64984Z"
+    },
+    "replaced_by": "u4"
+}
+```
+
 
 **```POST /pullRequest/merge```** — идемпотентная операция merge.
 
@@ -189,43 +259,23 @@ make k6-test
 ```json
 
 {
-  "pr": {
-    "pull_request_id": "pr-1001",
-    "pull_request_name": "Add search",
-    "author_id": "u1",
-    "status": "MERGED",
-    "assigned_reviewers": ["u2", "u3"],
-    "createdAt": "2025-11-23T16:17:59.442504Z",
-    "mergedAt": "2025-11-23T16:23:33.228974Z"
-  }
+    "pr": {
+        "pull_request_id": "pr-1001",
+        "pull_request_name": "Add search",
+        "author_id": "u1",
+        "status": "MERGED",
+        "assigned_reviewers": [
+            "u5",
+            "u4"
+        ],
+        "createdAt": "2025-11-24T05:59:25.64984Z",
+        "mergedAt": "2025-11-24T06:00:38.674579Z"
+    }
 }
 
 ```
-Повторный вызов merge возвращает то же состояние MERGED без ошибки.
+Повторный вызов merge возвращает то же состояние MERGED.
 
-**```POST /pullRequest/reassign```** — переназначить конкретного ревьювера на другого участника его команды.
-
-Пример запроса:
-```json
-{
-  "pull_request_id": "pr-1001",
-  "old_user_id": "u2"
-}
-```
-
-Пример ответа ```200 OK```:
-```json
-{
-  "pr": {
-    "pull_request_id": "pr-1001",
-    "pull_request_name": "Add search",
-    "author_id": "u1",
-    "status": "OPEN",
-    "assigned_reviewers": ["u3", "u4"]
-  },
-  "replaced_by": "u4"
-}
-```
 
 Возможные ошибки:
 
@@ -240,10 +290,33 @@ make k6-test
 Пример ответа ```200 OK```:
 ```json
 {
-  "reviewer_stats": [
-    { "user_id": "u2", "reviews_assigned": 3 },
-    { "user_id": "u3", "reviews_assigned": 5 }
-  ]
+    "reviewer_stats": [
+        {
+            "user_id": "u4",
+            "username": "Vladimir",
+            "assigned_count": 1
+        },
+        {
+            "user_id": "u5",
+            "username": "Kirill",
+            "assigned_count": 1
+        },
+        {
+            "user_id": "u1",
+            "username": "Egor",
+            "assigned_count": 0
+        },
+        {
+            "user_id": "u2",
+            "username": "Andrei",
+            "assigned_count": 0
+        },
+        {
+            "user_id": "u3",
+            "username": "Nikolai",
+            "assigned_count": 0
+        }
+    ]
 }
 ```
 
@@ -254,25 +327,23 @@ make k6-test
 ```json
 {
   "team_name": "backend",
-  "user_ids": ["u2", "u3"]
+  "user_ids": ["u4", "u5"]
 }
 ```
 
 Пример ответа ```200 OK```:
 ```json
 {
-  "team_name": "backend",
-  "deactivated_user_ids": ["u2", "u3"],
-  "reassigned_count": 2,
-  "not_reassigned": [
-    {
-      "pull_request_id": "pr-2001",
-      "user_id": "u3",
-      "reason": "NO_CANDIDATE"
-    }
-  ]
+    "team_name": "backend",
+    "deactivated_user_ids": [
+        "u4",
+        "u5"
+    ],
+    "reassigned_count": 0,
+    "not_reassigned": []
 }
 ```
+Здесь пользователи команды были деактивированы, но не переназначены, так как PR не открыт.
 
 ## Нагрузочное тестирование (k6)
 
