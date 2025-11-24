@@ -109,31 +109,7 @@ make k6-test
   ]
 }
 ```
- **```POST /team/bulkDeactivate ```**— массовая деактивация пользователей команды с безопасной переназначаемостью открытых PR.
 
-Пример запроса:
-```json
-{
-  "team_name": "backend",
-  "user_ids": ["u2", "u3"]
-}
-```
-
-Пример ответа:
-```json
-{
-  "team_name": "backend",
-  "deactivated_user_ids": ["u2", "u3"],
-  "reassigned_count": 2,
-  "not_reassigned": [
-    {
-      "pull_request_id": "pr-2001",
-      "user_id": "u3",
-      "reason": "NO_CANDIDATE"
-    }
-  ]
-}
-```
 ### Users
 **```POST /users/setIsActive```** — изменить флаг активности пользователя.
 
@@ -260,12 +236,40 @@ make k6-test
 ```409 NO_CANDIDATE``` — не найден активный кандидат для замены в команде.
 ### Статистика 
 **```GET /stats/reviewers```** — cтатистика назначений по ревьюверам.
+
 Пример ответа ```200 OK```:
 ```json
 {
   "reviewer_stats": [
     { "user_id": "u2", "reviews_assigned": 3 },
     { "user_id": "u3", "reviews_assigned": 5 }
+  ]
+}
+```
+
+### Массовая деактивация
+**```POST /team/bulkDeactivate```** — массовая деактивация пользователей команды и безопасная переназначаемость открытых PR.
+
+Пример запроса:
+```json
+{
+  "team_name": "backend",
+  "user_ids": ["u2", "u3"]
+}
+```
+
+Пример ответа ```200 OK```:
+```json
+{
+  "team_name": "backend",
+  "deactivated_user_ids": ["u2", "u3"],
+  "reassigned_count": 2,
+  "not_reassigned": [
+    {
+      "pull_request_id": "pr-2001",
+      "user_id": "u3",
+      "reason": "NO_CANDIDATE"
+    }
   ]
 }
 ```
